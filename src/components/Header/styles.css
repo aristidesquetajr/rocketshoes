@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 50px 0;
+}
+
+.container a {
+  transition: opacity 0.2s;
+}
+
+.container a:hover {
+  opacity: 0.7;
+}
+
+.car {
+  text-align: right;
+  margin-right: 10px;
+}
+
+.car strong {
+  display: block;
+  color: #fff;
+}
