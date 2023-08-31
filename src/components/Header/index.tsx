@@ -1,16 +1,20 @@
-import logoImag from '../../assets/images/logo.svg'
+import { MdShoppingBasket } from 'react-icons/md'
 
+import logoImag from '../../assets/images/logo.svg'
 import styles from './styles.module.scss'
 
 export function Header() {
   return (
     <header className={styles.container}>
-      <a href="#">
-        <img src={logoImag} alt="" />
+      <a href="/">
+        <img src={logoImag} alt="Rocketshoes" />
       </a>
-      <div className={styles.car}>
-        <strong>Meu carrinho</strong>
-      </div>
+      <a href="/cart" className={styles.cart}>
+        <div>
+          <strong>Meu carrinho</strong>
+        </div>
+        <MdShoppingBasket size={36} color="#FFF" />
+      </a>
     </header>
   )
 }
