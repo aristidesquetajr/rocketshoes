@@ -1,8 +1,8 @@
-import './styles.css'
+import styles from './styles.module.scss'
 
 export function Home() {
   return (
-    <ul className="productList">
+    <ul className={styles.productList}>
       <li>
         <img
           src="https://rocketseat-cdn.s3-sa-east-1.amazonaws.com/modulo-redux/tenis1.jpg"

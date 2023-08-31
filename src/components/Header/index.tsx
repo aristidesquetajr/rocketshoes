@@ -1,14 +1,14 @@
 import logoImag from '../../assets/images/logo.svg'
 
-import './styles.css'
+import styles from './styles.module.scss'
 
 export function Header() {
   return (
-    <header className="container">
+    <header className={styles.container}>
       <a href="#">
         <img src={logoImag} alt="" />
       </a>
-      <div className="car">
+      <div className={styles.car}>
         <strong>Meu carrinho</strong>
       </div>
     </header>
