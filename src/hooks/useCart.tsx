@@ -1,15 +1,25 @@
-import { ReactNode, createContext, useContext } from 'react'
+import { ReactNode, createContext, useContext, useState } from 'react'
+import { Product } from '../types'
 
 interface CartProviderProps {
   children: ReactNode
 }
 
-interface CartContextData {}
+interface CartContextData {
+  cart: Product[]
+}
 
 const CartContext = createContext<CartContextData>({} as CartContextData)
 
 export function CartProvider({ children }: CartProviderProps) {
-  return <CartContext.Provider value={{}}>{children}</CartContext.Provider>
+  const [cart, setCart] = useState<Product[]>(() => {
+    const storagedCart = window.localStorage.getItem('@RocketShoes:cart')
+
+    return storagedCart ? JSON.parse(storagedCart) : []
+  })
+  return (
+    <CartContext.Provider value={{ cart }}>{children}</CartContext.Provider>
+  )
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

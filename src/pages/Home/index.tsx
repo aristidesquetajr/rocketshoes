@@ -5,11 +5,24 @@ import styles from './styles.module.scss'
 import { Product } from '../../types'
 import { api } from '../../services/api'
 import { formatPrice } from '../../util/format'
+import { useCart } from '../../hooks/useCart'
 
 type IProduct = Omit<Product, 'amount'>
 
+interface CartItemsAmount {
+  [key: number]: number
+}
+
 export function Home() {
   const [products, setProducts] = useState<IProduct[]>([])
+  const { cart } = useCart()
+
+
+  const cartItemsAmount = cart.reduce((sumAmount, product) => {
+    sumAmount[product.id] = product.amount
+
+    return sumAmount
+  }, {} as CartItemsAmount)
 
   useEffect(() => {
     async function loadProducts() {
@@ -25,15 +38,13 @@ export function Home() {
       {products.map((product) => {
         return (
           <li key={product.id}>
-            <img
-              src={product.image}
-              alt={product.title}
-            />
+            <img src={product.image} alt={product.title} />
             <strong>{product.title}</strong>
             <span>{formatPrice(product.price)}</span>
             <button type="button">
               <div data-testid="cart-product-quantity">
-                <MdAddShoppingCart size={16} color="#FFF" />0
+                <MdAddShoppingCart size={16} color="#FFF" />
+                {cartItemsAmount[product.id] || 0}
               </div>
               <span>ADICIONAR AO CARRINHO</span>
             </button>
