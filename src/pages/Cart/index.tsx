@@ -9,7 +9,7 @@ import { useCart } from '../../hooks/useCart'
 import { formatPrice } from '../../util/format'
 
 export function Cart() {
-  const { cart } = useCart()
+  const { cart, removeProduct } = useCart()
 
   const total = formatPrice(
     cart.reduce((sumTotal, { price, amount }) => {
@@ -17,6 +17,10 @@ export function Cart() {
       return sumTotal
     }, 0)
   )
+
+  function handleRemoveProduct(productId: number) {
+    removeProduct(productId)
+  }
 
   return (
     <div className={styles.container}>
@@ -60,7 +64,11 @@ export function Cart() {
                 <strong>{formatPrice(price * amount)}</strong>
               </td>
               <td>
-                <button type="button" data-testid="remove-product">
+                <button
+                  type="button"
+                  data-testid="remove-product"
+                  onClick={() => handleRemoveProduct(id)}
+                >
                   <MdDelete size={20} />
                 </button>
               </td>

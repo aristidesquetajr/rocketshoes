@@ -10,6 +10,7 @@ interface CartProviderProps {
 interface CartContextData {
   cart: Product[]
   addProduct: (productId: number) => Promise<void>
+  removeProduct: (productId: number) => void
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData)
@@ -47,8 +48,25 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   }
 
+  function removeProduct(productId: number) {
+    try {
+      setCart((prevCart) => {
+        const newCart = prevCart.filter(({ id }) => id != productId)
+
+        window.localStorage.setItem(
+          '@RocketShoes:cart',
+          JSON.stringify(newCart)
+        )
+
+        return newCart
+      })
+    } catch {
+      toast.error('Erro na remoção do produto')
+    }
+  }
+
   return (
-    <CartContext.Provider value={{ cart, addProduct }}>
+    <CartContext.Provider value={{ cart, addProduct, removeProduct }}>
       {children}
     </CartContext.Provider>
   )
