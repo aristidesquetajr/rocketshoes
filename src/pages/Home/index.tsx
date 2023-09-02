@@ -15,12 +15,10 @@ interface CartItemsAmount {
 
 export function Home() {
   const [products, setProducts] = useState<IProduct[]>([])
-  const { cart } = useCart()
-
+  const { cart, addProduct } = useCart()
 
   const cartItemsAmount = cart.reduce((sumAmount, product) => {
-    sumAmount[product.id] = product.amount
-
+    Object.assign(sumAmount, {[product.id]: product.amount})
     return sumAmount
   }, {} as CartItemsAmount)
 
@@ -33,6 +31,10 @@ export function Home() {
     loadProducts()
   }, [])
 
+  function handleAddProduct(id: number) {
+    addProduct(id)
+  }
+
   return (
     <ul className={styles.productList}>
       {products.map((product) => {
@@ -41,7 +43,11 @@ export function Home() {
             <img src={product.image} alt={product.title} />
             <strong>{product.title}</strong>
             <span>{formatPrice(product.price)}</span>
-            <button type="button">
+            <button
+              type="button"
+              data-testid="add-product-button"
+              onClick={() => handleAddProduct(product.id)}
+            >
               <div data-testid="cart-product-quantity">
                 <MdAddShoppingCart size={16} color="#FFF" />
                 {cartItemsAmount[product.id] || 0}

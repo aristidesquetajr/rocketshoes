@@ -1,5 +1,7 @@
 import { ReactNode, createContext, useContext, useState } from 'react'
 import { Product } from '../types'
+import { toast } from 'react-toastify'
+import { api } from '../services/api'
 
 interface CartProviderProps {
   children: ReactNode
@@ -7,18 +9,48 @@ interface CartProviderProps {
 
 interface CartContextData {
   cart: Product[]
+  addProduct: (productId: number) => Promise<void>
 }
 
 const CartContext = createContext<CartContextData>({} as CartContextData)
 
 export function CartProvider({ children }: CartProviderProps) {
   const [cart, setCart] = useState<Product[]>(() => {
-    const storagedCart = window.localStorage.getItem('@RocketShoes:cart')
+    const storagedCart = window.localStorage.getItem('@RocketShoes:cart')!
 
-    return storagedCart ? JSON.parse(storagedCart) : []
+    return JSON.parse(storagedCart) ?? []
   })
+
+  async function addProduct(productId: number) {
+    try {
+      const product = (await api.get<Product>(`/products/${productId}`)).data
+      product.amount = 1
+
+      setCart((prevCart) => {
+        const productInCart = prevCart.find(({ id }) => id === product.id)
+
+        if (productInCart) {
+          return prevCart
+        }
+
+        const newCart = [...prevCart, product]
+
+        window.localStorage.setItem(
+          '@RocketShoes:cart',
+          JSON.stringify(newCart)
+        )
+
+        return newCart
+      })
+    } catch {
+      toast.error('Erro na adição do produto')
+    }
+  }
+
   return (
-    <CartContext.Provider value={{ cart }}>{children}</CartContext.Provider>
+    <CartContext.Provider value={{ cart, addProduct }}>
+      {children}
+    </CartContext.Provider>
   )
 }
 
