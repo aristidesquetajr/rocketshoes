@@ -7,6 +7,11 @@
   a {
     transition: opacity 0.2s;
 
+    > img {
+      max-width: 276px;
+      width: 100%;
+    }
+
     &:hover {
       opacity: 0.7;
     }
@@ -17,10 +22,15 @@
   display: flex;
   align-items: center;
   text-decoration: none;
+  margin-left: 10px;
 
   div {
     text-align: right;
     margin-right: 10px;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
 
     strong {
       display: block;
