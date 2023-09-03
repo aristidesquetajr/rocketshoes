@@ -2,6 +2,7 @@ import { ReactNode, createContext, useContext, useState } from 'react'
 import { Product, Stock } from '../types'
 import { toast } from 'react-toastify'
 import { api } from '../services/api'
+import { getStorage, updateStorage } from '../util/localStorage'
 
 interface CartProviderProps {
   children: ReactNode
@@ -22,16 +23,11 @@ interface CartContextData {
 const CartContext = createContext<CartContextData>({} as CartContextData)
 
 export function CartProvider({ children }: CartProviderProps) {
-  const [cart, setCart] = useState<Product[]>(() => {
-    const storagedCart = window.localStorage.getItem('@RocketShoes:cart')!
-
-    return JSON.parse(storagedCart) ?? []
-  })
+  const [cart, setCart] = useState<Product[]>(getStorage())
 
   async function addProduct(productId: number) {
     try {
       const product = (await api.get<Product>(`/products/${productId}`)).data
-      product.amount = 1
 
       setCart((prevCart) => {
         const productInCart = prevCart.find(({ id }) => id === product.id)
@@ -40,12 +36,9 @@ export function CartProvider({ children }: CartProviderProps) {
           return prevCart
         }
 
-        const newCart = [...prevCart, product]
+        const newCart = [...prevCart, { ...product, amount: 1 }]
 
-        window.localStorage.setItem(
-          '@RocketShoes:cart',
-          JSON.stringify(newCart)
-        )
+        updateStorage(newCart)
 
         return newCart
       })
@@ -59,10 +52,7 @@ export function CartProvider({ children }: CartProviderProps) {
       setCart((prevCart) => {
         const newCart = prevCart.filter(({ id }) => id != productId)
 
-        window.localStorage.setItem(
-          '@RocketShoes:cart',
-          JSON.stringify(newCart)
-        )
+        updateStorage(newCart)
 
         return newCart
       })
@@ -84,18 +74,15 @@ export function CartProvider({ children }: CartProviderProps) {
       }
 
       setCart((prevCart) => {
-        const newCart = prevCart.map((cartProps) => {
-          if (cartProps.id === productId) {
-            cartProps.amount = amount
+        const newCart = prevCart.map((cart) => {
+          if (cart.id === productId) {
+            return { ...cart, amount }
           }
 
-          return cartProps
+          return cart
         })
 
-        window.localStorage.setItem(
-          '@RocketShoes:cart',
-          JSON.stringify(newCart)
-        )
+        updateStorage(newCart)
 
         return newCart
       })
